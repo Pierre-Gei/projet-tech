@@ -26,6 +26,11 @@
 #define A4 440
 #define F4 349
 
+#define TOLERANCE_CALIB 0.1
+#define CPT_CALIB_MAX 25
+
+#define TOLERANCE_MEASURE 0.05
+
 #include <Ultrasonic.h>
 Ultrasonic ultrasonic(TRIG_PIN, ECHO_PIN);
 SoftwareSerial bt(rxPin, txPin);
@@ -33,6 +38,9 @@ AltSoftSerial bt2(rxPin2, txPin2);
 
 String command = "";
 int startTimer = 0;
+int cpt_calib = 0;
+int dist_calib_temp = 0;
+int dist_calib = 1000;
 
 void setup() {
   Serial.begin(9600);
@@ -50,12 +58,36 @@ void setup() {
 
 void loop() {
   int dist = ultrasonic.read();
+  if(cpt_calib == 0 && (dist_calib < dist-(TOLERANCE_MEASURE*dist) || dist_calib > dist+(TOLERANCE_MEASURE*dist))){
+    dist_calib_temp = dist;
+    cpt_calib++;
+  }
+  else if(cpt_calib < CPT_CALIB_MAX){
+    if(dist > (dist_calib_temp/cpt_calib)-TOLERANCE_CALIB*(dist_calib_temp/cpt_calib) && dist < (dist_calib_temp/cpt_calib)+TOLERANCE_CALIB*(dist_calib_temp/cpt_calib)){
+      dist_calib_temp += dist;
+      cpt_calib ++;
+    }
+    else{
+        cpt_calib = 0;
+    }
+    return;
+  }
+  else if(cpt_calib == CPT_CALIB_MAX){
+    dist_calib = dist_calib_temp/cpt_calib;
+    cpt_calib++;
+    Serial.println("Calibration done at :" + String(dist_calib));
+    tone(SPEAKER_PIN, DO, 500);
+    delay(500);
+    cpt_calib = 0;
+  }
   // int freq = random(40, 5000);
   digitalWrite(SPEAKER_PIN, HIGH);
-  digitalWrite(LED_PIN, LOW);
-  if (dist <= 80) {
+  if (dist+(TOLERANCE_MEASURE*dist) < dist_calib && dist_calib != 0) {
+    Serial.println("Distance : " + String(dist));
     digitalWrite(LED_PIN, HIGH);
-    if(millis() - startTimer >= 100 && startTimer != 0){
+    delay(100);
+    digitalWrite(LED_PIN, LOW);
+    if(millis() - startTimer >= 50 && startTimer != 0){
       Serial.println(millis() - startTimer);
       bt.println((millis() - startTimer));
       tone(SPEAKER_PIN, F4, 250);
@@ -67,7 +99,6 @@ void loop() {
       tone(SPEAKER_PIN, C5, 1000);
       delay(1000);
       startTimer = 0;
-
     }
   }
   
