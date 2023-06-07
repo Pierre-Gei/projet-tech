@@ -1,4 +1,4 @@
 <div>{{timeElapsedDisplay}}</div>
-<button (click)="startTimer()">LANCER</button>
+<button (click)="startTimer();sendMessage('start')">LANCER</button>
 <button (click)="stopTimer()">STOP</button>
-<button (click)="bluetoothConnect()">Connexion</button>
+<button (click)="sendMessage('connexion')">Connexion</button>

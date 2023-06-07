@@ -9,13 +9,14 @@ wss.on('connection', (ws) => {
   console.log('Client connected');
 
   ws.on('message', (message) => {
+    console.log('recu avant', message);
     message = message.toString('utf8');
     console.log('received: ', message);
 
-    if (message === 'connexion') {
+    if (message === '"connexion"') {
       connectToBluetoothDevice();
     }
-    if(message === 'start') {
+    if(message === '"start"') {
       sendBluetoothMessage("start");
     }
   });
@@ -55,7 +56,7 @@ function connectToBluetoothDevice() {
           // Envoyer un message au client WebSocket pour indiquer la connexion Bluetooth établie
           wss.clients.forEach((client) => {
             if (client.readyState === WebSocket.OPEN) {
-              client.send('Connexion Bluetooth établie');
+              client.send('"Connexion Bluetooth établie"');
             }
           });
         });

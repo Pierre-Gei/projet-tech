@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import * as moment from 'moment';
 declare var navigator: any;
 
@@ -7,17 +10,48 @@ declare var navigator: any;
   templateUrl: './course.component.html',
   styleUrls: ['./course.component.css']
 })
-export class CourseComponent implements OnInit {
+export class CourseComponent implements OnInit, OnDestroy {
+  private socket$:WebSocketSubject<any>;
+  private unsubscribe$ = new Subject<void>();
+
+  messages:string[] = [];
+
   timeElapsedDisplay: string = '00:00:00';
   startTime: moment.Moment = moment();
   timer: any;
   timeElapsed: string = '00:00:00';
   dataReceived: string | undefined;
+  saveTime:string[] = [];
 
   constructor() {
+    this.socket$ = webSocket('ws://localhost:8080');
+  }
+
+  connect() {
+    this.socket$.pipe(takeUntil(this.unsubscribe$)).subscribe({
+      next: (message) => {
+        console.log('Message received:', message);
+        console.log('Le type sale chien',typeof(message));
+        if(typeof(message) == "number")
+        {
+          this.stopTimer();
+        }
+      },
+      error: (error) => {
+        console.error('WebSocket error:', error);
+      },
+      complete: () => {
+        console.log('WebSocket connection closed');
+      },
+    });
   }
 
   ngOnInit() {
+    this.connect();
+  }
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   startTimer() {
@@ -32,16 +66,12 @@ export class CourseComponent implements OnInit {
 
   stopTimer() {
     clearInterval(this.timer);
+    this.saveTime.push(this.timeElapsedDisplay);
+    console.log(this.saveTime);
+
   }
 
-  bluetoothConnect() {
-    const options = {
-      acceptAllDevices: true,
-      optionalServices: ['battery_service']
-    };
-    const device = navigator.bluetooth.requestDevice(options);
-    device.then((device: any) => {
-      console.log(device);
-    });
+  sendMessage(message:any){
+    this.socket$.next(message);
   }
 }
