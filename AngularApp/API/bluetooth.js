@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 const SerialPort = require('bluetooth-serial-port');
 const bluetoothSerial = new SerialPort.BluetoothSerialPort();
 const wss = new WebSocket.Server({ port: 8080 });
-
+const targetDevice = '00:21:11:01:83:BB';
 let isConnected = false;
 
 wss.on('connection', (ws) => {
@@ -17,7 +17,6 @@ wss.on('connection', (ws) => {
     }
     if(message === 'start') {
       sendBluetoothMessage("start");
-      console.log("start fddsf sd f");
     }
   });
 });
@@ -44,9 +43,8 @@ function connectToBluetoothDevice() {
     const macAddress = address.match(/\((.*?)\)/)[1];
 
     // Vérifier si c'est l'appareil Bluetooth spécifique que vous recherchez
-    if (!isConnected && macAddress === '00:21:11:01:83:BB') {
+    if (!isConnected && macAddress === targetDevice) {
       // Se connecter à l'appareil Bluetooth spécifique
-      console.log("youhou");
       bluetoothSerial.findSerialPortChannel(macAddress, function (channel) {
         console.log("channel" + channel);
         bluetoothSerial.connect(macAddress, channel, function () {
@@ -64,7 +62,7 @@ function connectToBluetoothDevice() {
       });
     }
   });
-
+  
   bluetoothSerial.on('finished', function () {
     console.log('Scan finished');
   });
