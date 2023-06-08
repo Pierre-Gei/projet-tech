@@ -21,6 +21,10 @@ wss.on('connection', (ws) => {
       sendBluetoothMessage("start");
     }
   });
+  ws.on('close', () => {
+    console.log('Client disconnected');
+    isConnected = false;
+  });
 });
 
 bluetoothSerial.on('data', function (data) {
@@ -35,6 +39,11 @@ bluetoothSerial.on('data', function (data) {
       client.send(JSON.stringify(message));
     }
   });
+});
+
+bluetoothSerial.on('closed', function () {
+  console.log('Connexion Bluetooth fermée');
+  isConnected = false;
 });
 
 function connectToBluetoothDevice() {
@@ -71,6 +80,8 @@ function connectToBluetoothDevice() {
   bluetoothSerial.on('finished', function () {
     console.log('Scan finished');
   });
+
+ 
 
   bluetoothSerial.inquire();
 }

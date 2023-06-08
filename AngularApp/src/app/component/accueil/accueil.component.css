@@ -1,0 +1,20 @@
+.case{
+    height: 100px;
+    width: 400px;
+    background: grey;
+    border-radius: 20px;
+    border: white 1px solid;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* add justify-content property */
+    vertical-align: middle; /* add vertical-align property */
+}
+
+.case:hover{
+    background: #1E90FF;
+    cursor: pointer;
+}
