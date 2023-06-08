@@ -29,10 +29,15 @@ export class CourseComponent implements OnInit, OnDestroy {
 
   connect() {
     this.socket$.pipe(takeUntil(this.unsubscribe$)).subscribe({
-      next: (message) => {
-        console.log('Message received:', message);
-        console.log('Le type sale chien',typeof(message));
-        if(typeof(message) == "number")
+      next: (data:any) => {
+        console.log('Message received:', data);
+        console.log('Le type sale chien',typeof(data));
+        console.log('stringify',JSON.stringify(data));
+        if(data.message == "Started\r\n" )
+        {
+          this.startTimer();
+        }
+        else if(data.message == "stopped\r\n")
         {
           this.stopTimer();
         }
@@ -72,6 +77,9 @@ export class CourseComponent implements OnInit, OnDestroy {
   }
 
   sendMessage(message:any){
-    this.socket$.next(message);
+    const messageToSend = {
+      message: message
+    };
+    this.socket$.next(messageToSend);
   }
 }

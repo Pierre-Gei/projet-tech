@@ -11,12 +11,13 @@ wss.on('connection', (ws) => {
   ws.on('message', (message) => {
     console.log('recu avant', message);
     message = message.toString('utf8');
+    message = JSON.parse(message);
     console.log('received: ', message);
 
-    if (message === '"connexion"') {
+    if (message.message == 'connexion') {
       connectToBluetoothDevice();
     }
-    if(message === '"start"') {
+    if(message.message == 'start') {
       sendBluetoothMessage("start");
     }
   });
@@ -24,11 +25,14 @@ wss.on('connection', (ws) => {
 
 bluetoothSerial.on('data', function (data) {
   console.log('Bluetooth data received:', data);
-
+  console.log('Bluetooth data received:', data.toString('utf8') );
   // Envoyer les données au client WebSocket
+  const message = {
+    message: data.toString('utf8'),
+  }
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
-      client.send(data.toString('utf8'));
+      client.send(JSON.stringify(message));
     }
   });
 });
