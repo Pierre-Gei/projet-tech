@@ -6,20 +6,26 @@ import { AppComponent } from './app.component';
 import { CourseComponent } from './component/course/course.component';
 import { WebBluetoothModule } from '@manekinekko/angular-web-bluetooth';
 import { AccueilComponent } from './component/accueil/accueil.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ConnexionComponent } from './component/connexion/connexion.component';
+import {MatDialogModule} from '@angular/material/dialog';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     CourseComponent,
-    AccueilComponent
+    AccueilComponent,
+    ConnexionComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     WebBluetoothModule.forRoot({
       enableTracing: true // or false, this will enable logs in the browser's console
-    })
+    }),
+    BrowserAnimationsModule,
+    MatDialogModule
   ],
   providers: [],
   bootstrap: [AppComponent]

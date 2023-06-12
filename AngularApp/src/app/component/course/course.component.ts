@@ -2,7 +2,10 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import {MatDialog, MatDialogRef, MatDialogModule} from '@angular/material/dialog';
+import {MatButtonModule} from '@angular/material/button';
 import * as moment from 'moment';
+import { ConnexionComponent } from '../connexion/connexion.component';
 declare var navigator: any;
 
 @Component({
@@ -22,8 +25,11 @@ export class CourseComponent implements OnInit, OnDestroy {
   timeElapsed: string = '00:00:00';
   dataReceived: string | undefined;
   saveTime:string[] = [];
+  isConnected:boolean = false;
+  macAddress:any = [];
+  connecting:boolean = false;
 
-  constructor() {
+  constructor(public dialog: MatDialog) {
     this.socket$ = webSocket('ws://localhost:8080');
   }
 
@@ -32,14 +38,22 @@ export class CourseComponent implements OnInit, OnDestroy {
       next: (data:any) => {
         console.log('Message received:', data);
         console.log('Le type sale chien',typeof(data));
-        console.log('stringify',JSON.stringify(data));
-        if(data.message == "Started\r\n" )
-        {
+        if(data.message == "Started\r\n" ){
           this.startTimer();
         }
-        else if(data.message == "stopped\r\n")
-        {
+        else if(data.message == "stopped\r\n"){
           this.stopTimer();
+        }
+        else if(data.message == "isConnected"){
+          this.isConnected = data.isConnected; 
+          console.log("eeeee" + data.isConnected);
+        }
+        else if (data.message == "connexion"){
+          this.macAddress = data.tabMacAddress;
+          this.macAddress.forEach((element:any) => {
+            console.log(element);
+          });
+          console.log("macAddress" + this.macAddress);
         }
       },
       error: (error) => {
@@ -53,6 +67,7 @@ export class CourseComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.connect();
+    this.sendMessage("isConnected");
   }
   ngOnDestroy() {
     this.unsubscribe$.next();
@@ -82,4 +97,62 @@ export class CourseComponent implements OnInit, OnDestroy {
     };
     this.socket$.next(messageToSend);
   }
+
+  async onConnexion(): Promise<void> {
+    if (this.connecting) {
+      return Promise.resolve();
+    }
+    return new Promise<void>((resolve, reject) => {
+      this.sendMessage("connexion");
+      this.connecting = true;
+      let previousMacAddress:any = [];
+      if(this.macAddress !== undefined){
+        previousMacAddress = JSON.parse(JSON.stringify(this.macAddress));
+        console.log("previousMacAddress" + previousMacAddress);
+      }
+      let maxTime = 10000;
+      let timeElapsed = 0;
+
+      const checkDataInterval = setInterval(() => {
+        timeElapsed += 100;
+        if (this.hasChanged(this.macAddress, previousMacAddress) || timeElapsed >= maxTime) {
+          clearInterval(checkDataInterval);
+          const dialogRef = this.dialog.open(ConnexionComponent, {
+            width: '500px',
+            data: this.macAddress
+          });
+          dialogRef.afterClosed().subscribe(result => {
+            console.log('The dialog was closed');
+            console.log("resultat : " + result);
+            if(result == undefined){
+              return; 
+            }
+            let message = {
+              message:"macAddress",
+              macAddress:result
+            }
+            this.socket$.next(message);
+            resolve();
+          });
+        }
+
+      }, 100);
+    }).finally(() => {
+      this.connecting = false;
+      
+    });
+  }
+
+  hasChanged(macAddress:any, previousMacAddress:any){
+    if (macAddress.length !== previousMacAddress.length) {
+      return true;
+    }
+    for (let i = 0; i < macAddress.length; i++) {
+      if (macAddress[i].name !== previousMacAddress[i].name) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
 }
