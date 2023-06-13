@@ -1,10 +1,10 @@
-<div class="container">
-    <div class="row">
-        <div class="d-flex justify-content-center fontsize col-md-12">{{timeElapsedDisplay}}</div>
+<div class="container test">
+    <div class="row text-center">
+        <h1 class="taille">{{timeElapsedDisplay}}</h1>
     </div>
     <div class="row">
-        <button class="btn btn-primary col" (click)="sendMessage('start')">LANCER</button>
-        <button class="btn btn-danger col" (click)="stopTimer()">STOP</button>
+        <button class="btn btn-primary col marginButton" (click)="sendMessage('start')">LANCER</button>
+        <button class="btn btn-danger col marginButton" (click)="stopTimer()">STOP</button>
         <button mat-button class="btn btn-success col" (click)="onConnexion()">Connexion</button>
     </div>
 </div>

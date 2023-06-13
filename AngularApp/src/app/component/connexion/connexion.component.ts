@@ -9,7 +9,10 @@ import { MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./connexion.component.css']
 })
 export class ConnexionComponent {
-  selectedMacAddress:any = null;
+  selectedMacAddress = {
+    name: "",
+    macAddress: ""
+  }
   constructor(@Inject(MAT_DIALOG_DATA) public macAddresses:any, public dialogRef: MatDialogRef<ConnexionComponent>) { }
 
   selectMacAddress(macAddress:any){

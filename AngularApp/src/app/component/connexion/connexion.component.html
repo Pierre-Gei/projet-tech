@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>Liste</h2>
 <mat-dialog-content class="mat-typography">
-  <div *ngFor="let macAddress of macAddresses" (click)="selectMacAddress(macAddress)">{{macAddress.name}}</div>
+  <div *ngFor="let macAddress of macAddresses" (click)="selectMacAddress(macAddress)" [ngClass]="{'colorBlue': macAddress.name == selectedMacAddress.name}" class="pointer">{{macAddress.name}}</div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button (click) = "closeDialog()">Valider</button>
+  <button mat-button (click)="closeDialog()">Valider</button>
 </mat-dialog-actions>
