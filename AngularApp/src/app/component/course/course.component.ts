@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import {webSocket, WebSocketSubject} from 'rxjs/webSocket';
+import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import {MatDialog, MatDialogRef, MatDialogModule} from '@angular/material/dialog';
-import {MatButtonModule} from '@angular/material/button';
+import { MatDialog, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 import * as moment from 'moment';
 import { ConnexionComponent } from '../connexion/connexion.component';
+import { Eleve } from 'src/app/model/eleve';
 declare var navigator: any;
 
 @Component({
@@ -14,20 +15,25 @@ declare var navigator: any;
   styleUrls: ['./course.component.css']
 })
 export class CourseComponent implements OnInit, OnDestroy {
-  private socket$:WebSocketSubject<any>;
+  private socket$: WebSocketSubject<any>;
   private unsubscribe$ = new Subject<void>();
 
-  messages:string[] = [];
+  messages: string[] = [];
 
   timeElapsedDisplay: string = '00:00:00';
   startTime: moment.Moment = moment();
   timer: any;
   timeElapsed: string = '00:00:00';
   dataReceived: string | undefined;
-  saveTime:string[] = [];
-  isConnected:boolean = false;
-  macAddress:any = [];
-  connecting:boolean = false;
+  saveTime: any = [{ name: "eeee", time: "00:00:00" }, { name: "eeee", time: "00:00:00" }];
+  isConnected: boolean = false;
+  macAddress: any = [];
+  connecting: boolean = false;
+  lastTime = {
+    name: "",
+    time: ""
+  }
+  isStarted: boolean = false;
 
   constructor(public dialog: MatDialog) {
     this.socket$ = webSocket('ws://localhost:8080');
@@ -35,22 +41,23 @@ export class CourseComponent implements OnInit, OnDestroy {
 
   connect() {
     this.socket$.pipe(takeUntil(this.unsubscribe$)).subscribe({
-      next: (data:any) => {
+      next: (data: any) => {
         console.log('Message received:', data);
-        console.log('Le type sale chien',typeof(data));
-        if(data.message == "Started\r\n" ){
+        console.log('Le type sale chien', typeof (data));
+        if (data.message == "Started\r\n" && this.isStarted == false) {
+          this.isStarted = true;
           this.startTimer();
         }
-        else if(data.message == "stopped\r\n"){
+        else if (data.message == "stopped\r\n") {
           this.stopTimer();
         }
-        else if(data.message == "isConnected"){
-          this.isConnected = data.isConnected; 
+        else if (data.message == "isConnected") {
+          this.isConnected = data.isConnected;
           console.log("eeeee" + data.isConnected);
         }
-        else if (data.message == "connexion"){
+        else if (data.message == "connexion") {
           this.macAddress = data.tabMacAddress;
-          this.macAddress.forEach((element:any) => {
+          this.macAddress.forEach((element: any) => {
             console.log(element);
           });
           console.log("macAddress" + this.macAddress);
@@ -75,23 +82,28 @@ export class CourseComponent implements OnInit, OnDestroy {
   }
 
   startTimer() {
-    const startTime = moment(); // Utilisation d'une nouvelle variable locale
-    this.timer = setInterval(() => {
-      const currentTime = moment();
-      const duration = moment.duration(currentTime.diff(startTime));
-      const timerValue = moment.utc(duration.asMilliseconds()).format('mm:ss:SS');
-      this.timeElapsedDisplay = timerValue;
-    }, 1);
+      const startTime = moment(); // Utilisation d'une nouvelle variable locale
+      this.timer = setInterval(() => {
+        const currentTime = moment();
+        const duration = moment.duration(currentTime.diff(startTime));
+        const timerValue = moment.utc(duration.asMilliseconds()).format('mm:ss:SS');
+        this.timeElapsedDisplay = timerValue;
+      }, 1);
   }
 
   stopTimer() {
     clearInterval(this.timer);
-    this.saveTime.push(this.timeElapsedDisplay);
+    this.lastTime = {
+      name: "",
+      time: this.timeElapsedDisplay
+    }
+    this.saveTime.push(this.lastTime);
+    this.sortTimes();
     console.log(this.saveTime);
-
+    this.isStarted = false;
   }
 
-  sendMessage(message:any){
+  sendMessage(message: any) {
     const messageToSend = {
       message: message
     };
@@ -105,8 +117,8 @@ export class CourseComponent implements OnInit, OnDestroy {
     return new Promise<void>((resolve, reject) => {
       this.sendMessage("connexion");
       this.connecting = true;
-      let previousMacAddress:any = [];
-      if(this.macAddress !== undefined){
+      let previousMacAddress: any = [];
+      if (this.macAddress !== undefined) {
         previousMacAddress = JSON.parse(JSON.stringify(this.macAddress));
         console.log("previousMacAddress" + previousMacAddress);
       }
@@ -124,12 +136,12 @@ export class CourseComponent implements OnInit, OnDestroy {
           dialogRef.afterClosed().subscribe(result => {
             console.log('The dialog was closed');
             console.log("resultat : " + result);
-            if(result == undefined){
-              return; 
+            if (result == undefined) {
+              return;
             }
             let message = {
-              message:"macAddress",
-              macAddress:result
+              message: "macAddress",
+              macAddress: result
             }
             this.socket$.next(message);
             resolve();
@@ -139,11 +151,11 @@ export class CourseComponent implements OnInit, OnDestroy {
       }, 100);
     }).finally(() => {
       this.connecting = false;
-      
+
     });
   }
 
-  hasChanged(macAddress:any, previousMacAddress:any){
+  hasChanged(macAddress: any, previousMacAddress: any) {
     if (macAddress.length !== previousMacAddress.length) {
       return true;
     }
@@ -154,5 +166,23 @@ export class CourseComponent implements OnInit, OnDestroy {
     }
     return false;
   }
-  
+
+  sortTimes() {
+    this.saveTime.sort((a: any, b: any) => {
+      // Convertir les temps en millisecondes pour effectuer la comparaison
+      const timeA = moment.duration(a.time).asMilliseconds();
+      const timeB = moment.duration(b.time).asMilliseconds();
+
+      // Comparer les temps et renvoyer le résultat de la comparaison
+      if (timeA < timeB) {
+        return -1;
+      } else if (timeA > timeB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  }
+
+
 }

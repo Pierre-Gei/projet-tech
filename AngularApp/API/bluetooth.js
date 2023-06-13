@@ -48,6 +48,7 @@ wss.on('connection', (ws) => {
       sendBluetoothMessage("start");
     }
     else if (message.message == 'isConnected') {
+
       wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
           message = { message: "isConnected", isConnected: isConnected };
@@ -81,7 +82,6 @@ wss.on('connection', (ws) => {
   });
   ws.on('close', () => {
     console.log('Client disconnected');
-    isConnected = false;
   });
 });
 

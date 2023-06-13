@@ -1,15 +1,27 @@
-<div class="container test">
+<div class="container paddingDiv d-flex flex-column justify-content-center">
     <div class="row text-center">
         <h1 class="taille">{{timeElapsedDisplay}}</h1>
     </div>
-    <div class="row">
-        <button class="btn btn-primary col marginButton" (click)="sendMessage('start')">LANCER</button>
-        <button class="btn btn-danger col marginButton" (click)="stopTimer()">STOP</button>
-        <button mat-button class="btn btn-success col" (click)="onConnexion()">Connexion</button>
+    <div class="row marginDiv">
+        <button class="btn  btn-success col marginButton" (click)="isStarted ? null : sendMessage('start')" [disabled]="isStarted">LANCER</button>
+        <button class="btn btn-danger col marginButton">STOP</button>
+        <button mat-button class="btn btn-primary col " (click)="onConnexion()">Connexion</button>
     </div>
 </div>
 
-
-
-
-
+<div class="container d-flex flex-column justify-content-center">
+    <div class="row text-center">
+        <div class="offset-4 col-4">
+            <h1>Classement</h1>
+        </div>
+    </div>
+    <div class="row marginRow" *ngFor="let eleve of saveTime">
+        <div class="offset-3 col-6">
+            <div class="row">
+                <input type="text" [(ngModel)]="eleve.name" class="offset-3 col-3 inputBorder text-center" [ngClass]="{'highligthLeft':lastTime == eleve}">
+                <div class="col-3 d-flex align-items-center" [ngClass]="{'highligthRight':lastTime == eleve}">{{eleve.time}}</div>
+            </div>
+        </div>
+    </div>
+</div>
+                

@@ -7,3 +7,24 @@
 .marginButton {
     margin-right: 20px;
 }
+.marginDiv {
+    margin-top : 20px;
+}
+.paddingDiv {
+    padding-top: 20px;
+}
+
+.marginRow {
+    margin-top: 5px;
+}
+.inputBorder{
+    border: none;
+}
+.highligthRight {
+    background-color:  #f2f2f2;
+    border-radius:0 5px 5px 0;
+}
+.highligthLeft{
+    background-color:  #f2f2f2;
+    border-radius:5px 0 0 5px;
+}

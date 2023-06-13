@@ -9,6 +9,7 @@ import { AccueilComponent } from './component/accueil/accueil.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ConnexionComponent } from './component/connexion/connexion.component';
 import {MatDialogModule} from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import {MatDialogModule} from '@angular/material/dialog';
       enableTracing: true // or false, this will enable logs in the browser's console
     }),
     BrowserAnimationsModule,
-    MatDialogModule
+    MatDialogModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
