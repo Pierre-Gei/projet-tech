@@ -75,7 +75,8 @@ wss.on('connection', (ws) => {
             // Envoyer un message au client WebSocket pour indiquer la connexion Bluetooth établie
             wss.clients.forEach((client) => {
               if (client.readyState === WebSocket.OPEN) {
-                client.send('"Connexion Bluetooth établie"');
+                message = { message: "isConnected", isConnected: isConnected };
+                client.send(JSON.stringify(message));
               }
             });
           });
@@ -105,6 +106,14 @@ bluetoothSerial.on('data', function (data) {
 bluetoothSerial.on('closed', function () {
   console.log('Connexion Bluetooth fermée');
   isConnected = false;
+  // Envoyer un message au client WebSocket pour indiquer la connexion Bluetooth fermée
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      message = { message: "isConnected", isConnected: isConnected };
+      client.send(JSON.stringify(message));
+    }
+  }
+  );
 });
 
 

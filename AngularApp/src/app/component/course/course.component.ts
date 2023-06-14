@@ -7,7 +7,6 @@ import { MatButtonModule } from '@angular/material/button';
 import * as moment from 'moment';
 import { ConnexionComponent } from '../connexion/connexion.component';
 import { Eleve } from 'src/app/model/eleve';
-declare var navigator: any;
 
 @Component({
   selector: 'app-course',
@@ -34,6 +33,7 @@ export class CourseComponent implements OnInit, OnDestroy {
     time: ""
   }
   isStarted: boolean = false;
+  loading: boolean = false;
 
   constructor(public dialog: MatDialog) {
     this.socket$ = webSocket('ws://localhost:8080');
@@ -55,6 +55,9 @@ export class CourseComponent implements OnInit, OnDestroy {
           }
           else if (data.message == "isConnected") {
             this.isConnected = data.isConnected;
+            if (this.isConnected) {
+              this.loading = false;
+            }
             console.log("eeeee" + data.isConnected);
           }
           else if (data.message == "connexion") {
@@ -132,6 +135,7 @@ export class CourseComponent implements OnInit, OnDestroy {
         timeElapsed += 100;
         if (this.hasChanged(this.macAddress, previousMacAddress) || timeElapsed >= maxTime) {
           clearInterval(checkDataInterval);
+          this.loading = false;
           const dialogRef = this.dialog.open(ConnexionComponent, {
             width: '500px',
             data: this.macAddress
@@ -142,6 +146,7 @@ export class CourseComponent implements OnInit, OnDestroy {
             if (result == undefined) {
               return;
             }
+            this.loading = true;
             let message = {
               message: "macAddress",
               macAddress: result
@@ -150,6 +155,7 @@ export class CourseComponent implements OnInit, OnDestroy {
             resolve();
           });
         }
+        
 
       }, 100);
     }).finally(() => {
@@ -185,6 +191,9 @@ export class CourseComponent implements OnInit, OnDestroy {
         return 0;
       }
     });
+  }
+  deleteTime(time: any) {
+    this.saveTime = this.saveTime.filter((t: any) => t !== time);
   }
 
 
