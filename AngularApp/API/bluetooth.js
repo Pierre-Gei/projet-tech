@@ -57,6 +57,9 @@ wss.on('connection', (ws) => {
       }
       );
     }
+    else if (message.message == 'stop') {
+      sendBluetoothMessage("stop");
+    }
     else if (message.message == 'macAddress') {
       if (!isConnected) {
         let macAddress = message.macAddress;
@@ -90,11 +93,13 @@ bluetoothSerial.on('data', function (data) {
   console.log('Bluetooth data received:', data.toString('utf8'));
   // Envoyer les données au client WebSocket
   const message = { message: data.toString('utf8') };
+  if(message.message !== ''){
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(message));
     }
   });
+}
 });
 
 bluetoothSerial.on('closed', function () {

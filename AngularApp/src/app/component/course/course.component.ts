@@ -44,23 +44,26 @@ export class CourseComponent implements OnInit, OnDestroy {
       next: (data: any) => {
         console.log('Message received:', data);
         console.log('Le type sale chien', typeof (data));
-        if (data.message == "Started\r\n" && this.isStarted == false) {
-          this.isStarted = true;
-          this.startTimer();
-        }
-        else if (data.message == "stopped\r\n") {
-          this.stopTimer();
-        }
-        else if (data.message == "isConnected") {
-          this.isConnected = data.isConnected;
-          console.log("eeeee" + data.isConnected);
-        }
-        else if (data.message == "connexion") {
-          this.macAddress = data.tabMacAddress;
-          this.macAddress.forEach((element: any) => {
-            console.log(element);
-          });
-          console.log("macAddress" + this.macAddress);
+        if (data.message && typeof (data.message) === 'string') {
+
+          if (data.message.startsWith('started')) {
+
+            this.startTimer();
+          }
+          else if (data.message.startsWith('stopped')) {
+            this.stopTimer();
+          }
+          else if (data.message == "isConnected") {
+            this.isConnected = data.isConnected;
+            console.log("eeeee" + data.isConnected);
+          }
+          else if (data.message == "connexion") {
+            this.macAddress = data.tabMacAddress;
+            this.macAddress.forEach((element: any) => {
+              console.log(element);
+            });
+            console.log("macAddress" + this.macAddress);
+          }
         }
       },
       error: (error) => {
@@ -82,13 +85,13 @@ export class CourseComponent implements OnInit, OnDestroy {
   }
 
   startTimer() {
-      const startTime = moment(); // Utilisation d'une nouvelle variable locale
-      this.timer = setInterval(() => {
-        const currentTime = moment();
-        const duration = moment.duration(currentTime.diff(startTime));
-        const timerValue = moment.utc(duration.asMilliseconds()).format('mm:ss:SS');
-        this.timeElapsedDisplay = timerValue;
-      }, 1);
+    const startTime = moment(); // Utilisation d'une nouvelle variable locale
+    this.timer = setInterval(() => {
+      const currentTime = moment();
+      const duration = moment.duration(currentTime.diff(startTime));
+      const timerValue = moment.utc(duration.asMilliseconds()).format('mm:ss:SS');
+      this.timeElapsedDisplay = timerValue;
+    }, 1);
   }
 
   stopTimer() {
