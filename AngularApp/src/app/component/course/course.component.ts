@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import * as moment from 'moment';
 import { ConnexionComponent } from '../connexion/connexion.component';
 import { Eleve } from 'src/app/model/eleve';
+import { TimersService } from 'src/app/service/timers.service';
 
 @Component({
   selector: 'app-course',
@@ -34,8 +35,13 @@ export class CourseComponent implements OnInit, OnDestroy {
   }
   isStarted: boolean = false;
   loading: boolean = false;
+  listeEleve: Eleve = {
+    name: "",
+    time: []
+  }
+  name:string = "";
 
-  constructor(public dialog: MatDialog) {
+  constructor(public dialog: MatDialog, private timerService: TimersService) {
     this.socket$ = webSocket('ws://localhost:8080');
   }
 
@@ -47,7 +53,6 @@ export class CourseComponent implements OnInit, OnDestroy {
         if (data.message && typeof (data.message) === 'string') {
 
           if (data.message.startsWith('started')) {
-
             this.startTimer();
           }
           else if (data.message.startsWith('stopped')) {
@@ -81,6 +86,10 @@ export class CourseComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.connect();
     this.sendMessage("isConnected");
+    
+    this.timerService.getTimerCookieName().subscribe(response => {
+      console.log("Regarde : ", response);
+    });
   }
   ngOnDestroy() {
     this.unsubscribe$.next();
@@ -105,6 +114,8 @@ export class CourseComponent implements OnInit, OnDestroy {
     }
     this.saveTime.push(this.lastTime);
     this.sortTimes();
+    this.listeEleve.time = this.saveTime;
+    this.timerService.updateTimer(this.listeEleve);
     console.log(this.saveTime);
     this.isStarted = false;
   }
@@ -155,7 +166,7 @@ export class CourseComponent implements OnInit, OnDestroy {
             resolve();
           });
         }
-        
+
 
       }, 100);
     }).finally(() => {
@@ -194,7 +205,18 @@ export class CourseComponent implements OnInit, OnDestroy {
   }
   deleteTime(time: any) {
     this.saveTime = this.saveTime.filter((t: any) => t !== time);
+    this.listeEleve.time = this.saveTime;
+    this.timerService.updateTimer(this.listeEleve);
   }
 
-
+  createListTime(name: string) {
+    this.listeEleve = {
+      name: name,
+      time: []
+    }
+    this.timerService.createTimer(this.listeEleve).subscribe((data: any) => {
+      console.log(data);
+    }
+    );
+  }
 }

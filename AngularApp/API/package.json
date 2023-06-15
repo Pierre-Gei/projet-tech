@@ -14,6 +14,8 @@
     "bluetooth-serial-port": "^3.0.2",
     "body-parser": "^1.20.2",
     "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mongodb": "^5.6.0",
     "noble": "^1.9.1",
     "node-gyp": "^9.3.1",
     "serialport": "^11.0.0",

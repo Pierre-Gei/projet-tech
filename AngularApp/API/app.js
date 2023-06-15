@@ -1,30 +1,26 @@
-// SERIAL PORT
-
 const express = require('express');
-const app = express();
-const cors = require('cors');
-const portListen = 3000;
-const { ByteLengthParser } = require('@serialport/parser-byte-length')
 const bodyParser = require('body-parser');
-const {SerialPort} = require('serialport');
+const session = require('express-session');
+const { timerGet, timerPost, timerDelete, timerPut } = require('./timerController');
 
-const port = new SerialPort({path:'COM5', baudRate: 9600 });
-const parser = port.pipe(new ByteLengthParser({length: 8}));
-
-
-let arduinoData = '';
+const cors = require('cors');
+const app = express();
+const port = 3000;
+app.use (session({
+    secret : 'secret',
+    name:'cookie',
+}));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors({ credentials: true, origin: 'http://localhost:4200' }));
 
-app.get('/receive', (req, res) => {
-    res.json({data: arduinoData});
+app.get('/timer', timerGet);
+app.post('/timer', timerPost);
+app.delete('/timer/:id', timerDelete)
+app.put('/timer/:id', timerPut)
+app.get('/timer/session', (req, res) => {
+    res.status(200).json(req.session.name);
 });
 
-parser.on ('data', (data) => {
-    arduinoData = data.toString();
-    console.log(arduinoData);
-});
-
-app.listen(portListen, () => {
-    console.log(`Listening on port ${portListen}`)
-})
+app.listen(port, () => console.log(`Example app listening on port ${port}!`));
