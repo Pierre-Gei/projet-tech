@@ -1,13 +1,16 @@
 #define BUTTON_PIN 4
 #define LED_PIN 10
-#include <SoftwareSerial.h>
 #include <AltSoftSerial.h>
-#define rxPin 12  // Broche 11 en tant que RX, à raccorder sur TX du HC-05
-#define txPin 11  // Broche 10 en tant que TX, à raccorder sur RX du HC-05
-#define rxPin2 4
-#define txPin2 3
-#define TRIG_PIN 9
-#define ECHO_PIN 8
+//#include <NeoSWSerial.h>
+#include <SoftwareSerial.h>
+
+#define rxPin 12 // Broche 11 en tant que RX, à raccorder sur TX du HC-05
+#define txPin 11 // Broche 10 en tant que TX, à raccorder sur RX du HC-05
+#define rxPin2 9
+#define txPin2 8
+#define EnPin 2
+#define TRIG_PIN 3
+#define ECHO_PIN 4
 #define SPEAKER_PIN 6
 
 #define DO 261
@@ -34,7 +37,9 @@
 #include <Ultrasonic.h>
 Ultrasonic ultrasonic(TRIG_PIN, ECHO_PIN);
 SoftwareSerial bt(rxPin, txPin);
+#include <SoftwareSerial.h>
 AltSoftSerial bt2(rxPin2, txPin2);
+//AltSoftSerial bt2(rxPin2,txPin2);
 
 String command = "";
 int startTimer = 0;
@@ -42,8 +47,9 @@ int cpt_calib = 0;
 int dist_calib_temp = 0;
 int dist_calib = 1000;
 
-void setup() {
-  Serial.begin(9600);
+void setup()
+{
+  Serial.begin(38400);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   pinMode(LED_PIN, OUTPUT);
   pinMode(rxPin, INPUT);
@@ -52,61 +58,39 @@ void setup() {
   pinMode(txPin2, OUTPUT);
   pinMode(SPEAKER_PIN, OUTPUT);
   Serial.println("ENTER AT Commands:");
-  bt.begin(9600);
   bt2.begin(9600);
+  bt.begin(38400);
+  // get return message from HC-06
 }
 
 void loop() {
   int dist = ultrasonic.read();
-  if(cpt_calib == 0 && (dist_calib < dist-(TOLERANCE_MEASURE*dist) || dist_calib > dist+(TOLERANCE_MEASURE*dist))){
-    dist_calib_temp = dist;
-    cpt_calib++;
-  }
-  else if(cpt_calib < CPT_CALIB_MAX){
-    if(dist > (dist_calib_temp/cpt_calib)-TOLERANCE_CALIB*(dist_calib_temp/cpt_calib) && dist < (dist_calib_temp/cpt_calib)+TOLERANCE_CALIB*(dist_calib_temp/cpt_calib)){
-      dist_calib_temp += dist;
-      cpt_calib ++;
-    }
-    else{
-        cpt_calib = 0;
-    }
-    return;
-  }
-  else if(cpt_calib == CPT_CALIB_MAX){
-    dist_calib = dist_calib_temp/cpt_calib;
-    cpt_calib++;
-    Serial.println("Calibration done at :" + String(dist_calib));
-    tone(SPEAKER_PIN, DO, 500);
-    delay(500);
-    cpt_calib = 0;
-  }
-  // int freq = random(40, 5000);
-  digitalWrite(SPEAKER_PIN, HIGH);
-  if (dist+(TOLERANCE_MEASURE*dist) < dist_calib && dist_calib != 0) {
-    Serial.println("Distance : " + String(dist));
-    digitalWrite(LED_PIN, HIGH);
-    delay(100);
-    digitalWrite(LED_PIN, LOW);
-    if(millis() - startTimer >= 50 && startTimer != 0){
-      Serial.println(millis() - startTimer);
-      bt.println((millis() - startTimer));
-      tone(SPEAKER_PIN, F4, 250);
-      delay(250);
-      tone(SPEAKER_PIN, A4, 250);
-      delay(250);
-      tone(SPEAKER_PIN, B4, 250);
-      delay(250);
-      tone(SPEAKER_PIN, C5, 1000);
-      delay(1000);
-      startTimer = 0;
-    }
-  }
-  
-  if (bt.available()) {
-    while (bt.available()) {
-      command += (char)bt.read();
+  if (bt2.available()>0)
+  {
+    while (bt2.available()>0)
+    {
+      command += (char)bt2.read();
     }
     Serial.println(command);
+    if (command != "")
+    {
+      Serial.print("HC05: received command: ");
+      Serial.println(command);
+      command = "";
+    }
+    delay(100);
+  }
+  else if (bt.available()>0)
+  {
+    while (bt.available()>0)
+    {
+      command += (char)bt.read();
+    }
+    if (command != "")
+    {
+      Serial.print("HC06: received command: ");
+      Serial.println(command);
+    }
     // if (command.startsWith("on")) {
     //   digitalWrite(LED_PIN, HIGH);
     // }
@@ -127,37 +111,117 @@ void loop() {
       delay(500);
       noTone(SPEAKER_PIN);
       delay(500);
+      startTimer = millis();
+      bt.print("started");
+      Serial.println("started");
       tone(SPEAKER_PIN, LA5, 1000);
       delay(1000);
       noTone(SPEAKER_PIN);
       startTimer = millis();
     }
-    
+    else if(command.startsWith("stop")){
+      Serial.println(millis() - startTimer);
+      bt.print("stopped");
+      Serial.println(bt.getWriteError());
+      tone(SPEAKER_PIN, F4, 250);
+      delay(250);
+      tone(SPEAKER_PIN, A4, 250);
+      delay(250);
+      tone(SPEAKER_PIN, B4, 250);
+      delay(250);
+      tone(SPEAKER_PIN, C5, 1000);
+      delay(1000);
+      startTimer = 0;
+    }
+
     command = "";
   }
-
-  if(bt2.available()){
-    while (bt2.available()) {
-      command += (char)bt2.read();
+  if (Serial.available()>0)
+  {
+    command = Serial.readString();
+    Serial.print(command);
+    if (command.startsWith("bt1"))
+    {
+      // send to bt HC-06
+      Serial.println("Send to HC06");
+      bt.println(command.substring(3));
+      Serial.println(bt.getWriteError());
+      delay(10);
     }
-    command = "";
-  }
-
-  if (Serial.available()) {
-    String userInput = Serial.readStringUntil('\n');  // Read user input
-    if(userInput.startsWith("bt2")){
-      userInput = userInput.substring(3);
-      bt2.println(userInput);
+    else if (command.startsWith("bt2"))
+    {
+      // send to bt HC-05 if AT command, turn on EnPin else just send
+      Serial.println("Send to HC05");
+      command = command.substring(3);
+      if (command.startsWith("AT"))
+      {
+        Serial.println("AT Command");
+        digitalWrite(EnPin, HIGH);
+        delay(100);
+        bt2.println(command);
+        Serial.println(bt2.getWriteError());
+        delay(100);
+        digitalWrite(EnPin, LOW);
+        delay(10);
+      }
+      else
+      {
+        digitalWrite(EnPin, LOW);
+        delay(100);
+        bt2.println(command);
+        Serial.println(bt2.getWriteError());
+        delay(10);
+      }
     }
-    else{
-      bt.println(userInput);
+  }
+  if (cpt_calib == 0 && (dist_calib < dist - (TOLERANCE_MEASURE * dist) || dist_calib > dist + (TOLERANCE_MEASURE * dist)))
+  {
+    dist_calib_temp = dist;
+    cpt_calib++;
+  }
+  else if (cpt_calib < CPT_CALIB_MAX)
+  {
+    if (dist > (dist_calib_temp / cpt_calib) - TOLERANCE_CALIB * (dist_calib_temp / cpt_calib) && dist < (dist_calib_temp / cpt_calib) + TOLERANCE_CALIB * (dist_calib_temp / cpt_calib))
+    {
+      dist_calib_temp += dist;
+      cpt_calib++;
+    }
+    else
+    {
+      cpt_calib = 0;
+    }
+    return;
+  }
+  else if (cpt_calib == CPT_CALIB_MAX)
+  {
+    dist_calib = dist_calib_temp / cpt_calib;
+    cpt_calib++;
+    // Serial.println("Calibration done at :" + String(dist_calib));
+    tone(SPEAKER_PIN, DO, 500);
+    delay(500);
+    cpt_calib = 0;
+  }
+  // int freq = random(40, 5000);
+  if (dist + (TOLERANCE_MEASURE * dist) < dist_calib && dist_calib != 0)
+  {
+    digitalWrite(LED_PIN, HIGH);
+    delay(100);
+    digitalWrite(LED_PIN, LOW);
+    if (millis() - startTimer >= 50 && startTimer != 0)
+    {
+      Serial.println(millis() - startTimer);
+      bt.print("stopped");
+      Serial.println(bt.getWriteError());
+      tone(SPEAKER_PIN, F4, 250);
+      delay(250);
+      tone(SPEAKER_PIN, A4, 250);
+      delay(250);
+      tone(SPEAKER_PIN, B4, 250);
+      delay(250);
+      tone(SPEAKER_PIN, C5, 1000);
+      delay(1000);
+      startTimer = 0;
     }
   }
-  
-  if (digitalRead(BUTTON_PIN) == 0) {
-    Serial.println("bouton OK");
-    bt.println("on");
-  }
-  
-  delay(100);
+  delay(10);
 }
