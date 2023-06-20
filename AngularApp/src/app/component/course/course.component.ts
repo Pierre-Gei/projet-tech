@@ -25,7 +25,6 @@ export class CourseComponent implements OnInit, OnDestroy {
   timer: any;
   timeElapsed: string = '00:00:00';
   dataReceived: string | undefined;
-  saveTime: any = [{ name: "eeee", time: "00:00:00" }, { name: "eeee", time: "00:00:00" }];
   isConnected: boolean = false;
   macAddress: any = [];
   connecting: boolean = false;
@@ -36,10 +35,14 @@ export class CourseComponent implements OnInit, OnDestroy {
   isStarted: boolean = false;
   loading: boolean = false;
   listeEleve: Eleve = {
+    _id: "",
     name: "",
-    time: []
+    time: [{ name: "aaa", time: "eeee"}]
   }
-  name:string = "";
+  coockie:any ={
+    name: "",
+    id : ""
+  }
 
   constructor(public dialog: MatDialog, private timerService: TimersService) {
     this.socket$ = webSocket('ws://localhost:8080');
@@ -49,7 +52,6 @@ export class CourseComponent implements OnInit, OnDestroy {
     this.socket$.pipe(takeUntil(this.unsubscribe$)).subscribe({
       next: (data: any) => {
         console.log('Message received:', data);
-        console.log('Le type sale chien', typeof (data));
         if (data.message && typeof (data.message) === 'string') {
 
           if (data.message.startsWith('started')) {
@@ -63,14 +65,11 @@ export class CourseComponent implements OnInit, OnDestroy {
             if (this.isConnected) {
               this.loading = false;
             }
-            console.log("eeeee" + data.isConnected);
           }
           else if (data.message == "connexion") {
             this.macAddress = data.tabMacAddress;
             this.macAddress.forEach((element: any) => {
-              console.log(element);
             });
-            console.log("macAddress" + this.macAddress);
           }
         }
       },
@@ -86,9 +85,21 @@ export class CourseComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.connect();
     this.sendMessage("isConnected");
-    
     this.timerService.getTimerCookieName().subscribe(response => {
-      console.log("Regarde : ", response);
+      this.coockie.name = response.name;
+      this.coockie.id = response.id;
+      this.listeEleve.name = this.coockie.name;
+      this.listeEleve._id = this.coockie.id;
+      console.log("coockie ID : "+this.coockie.id);
+      console.log("coockie name : "+this.coockie.name);
+      console.log("listeEleve ID : "+this.listeEleve._id);
+      console.log("listeEleve name : "+this.listeEleve.name);
+      if(this.coockie.name != undefined){
+        this.timerService.getById(this.coockie.id).subscribe(response => {
+          this.listeEleve.time = response.time;
+          console.log("listeEleve time : "+this.listeEleve.time);
+        });
+      }
     });
   }
   ngOnDestroy() {
@@ -112,11 +123,9 @@ export class CourseComponent implements OnInit, OnDestroy {
       name: "",
       time: this.timeElapsedDisplay
     }
-    this.saveTime.push(this.lastTime);
+    this.listeEleve.time.push(this.lastTime);
     this.sortTimes();
-    this.listeEleve.time = this.saveTime;
-    this.timerService.updateTimer(this.listeEleve);
-    console.log(this.saveTime);
+    this.updateListTimeBDD();
     this.isStarted = false;
   }
 
@@ -137,7 +146,6 @@ export class CourseComponent implements OnInit, OnDestroy {
       let previousMacAddress: any = [];
       if (this.macAddress !== undefined) {
         previousMacAddress = JSON.parse(JSON.stringify(this.macAddress));
-        console.log("previousMacAddress" + previousMacAddress);
       }
       let maxTime = 10000;
       let timeElapsed = 0;
@@ -152,8 +160,6 @@ export class CourseComponent implements OnInit, OnDestroy {
             data: this.macAddress
           });
           dialogRef.afterClosed().subscribe(result => {
-            console.log('The dialog was closed');
-            console.log("resultat : " + result);
             if (result == undefined) {
               return;
             }
@@ -188,7 +194,7 @@ export class CourseComponent implements OnInit, OnDestroy {
   }
 
   sortTimes() {
-    this.saveTime.sort((a: any, b: any) => {
+    this.listeEleve.time.sort((a: any, b: any) => {
       // Convertir les temps en millisecondes pour effectuer la comparaison
       const timeA = moment.duration(a.time).asMilliseconds();
       const timeB = moment.duration(b.time).asMilliseconds();
@@ -204,9 +210,8 @@ export class CourseComponent implements OnInit, OnDestroy {
     });
   }
   deleteTime(time: any) {
-    this.saveTime = this.saveTime.filter((t: any) => t !== time);
-    this.listeEleve.time = this.saveTime;
-    this.timerService.updateTimer(this.listeEleve);
+    this.listeEleve.time = this.listeEleve.time.filter((t: any) => t !== time);
+    this.timerService.updateProduct(this.listeEleve);
   }
 
   createListTime(name: string) {
@@ -215,8 +220,19 @@ export class CourseComponent implements OnInit, OnDestroy {
       time: []
     }
     this.timerService.createTimer(this.listeEleve).subscribe((data: any) => {
-      console.log(data);
+      this.listeEleve._id = data.insertedId;
+      this.coockie.name = name;
+      this.coockie.id = data.insertedId;
     }
     );
+    
+  }
+
+  updateListTimeBDD(){
+    console.log("updateListTimeBDD")
+    console.log("ListeEleve : " + JSON.stringify(this.listeEleve));
+    console.log("id " + this.listeEleve._id + " name " + this.listeEleve.name + " time " + this.listeEleve.time);
+  
+    this.timerService.updateProduct(this.listeEleve).subscribe();
   }
 }

@@ -8,26 +8,28 @@ import { Eleve } from '../model/eleve';
   providedIn: 'root'
 })
 export class TimersService {
-  private url:string = "http://localhost:3000/timer";
+  private url:string = "http://localhost:3000/timer/";
   constructor(private http:HttpClient) { }
 
   getTimer():Observable<Eleve>{
     return this.http.get<Eleve>(this.url, {withCredentials: true});
   }
-
-  updateTimer(eleve:Eleve):Observable<Eleve>{
-    return this.http.put<Eleve>(this.url, eleve, {withCredentials: true});
-  }
-
-  deleteTimer():Observable<Eleve>{
-    return this.http.delete<Eleve>(this.url, {withCredentials: true});
-  }
-
   createTimer(eleve:Eleve):Observable<Eleve>{
     return this.http.post<Eleve>(this.url, eleve, {withCredentials: true});
   }
+  updateProduct(eleve: Eleve): Observable<Eleve> {
+    console.log("eleeeevvvee : " + JSON.stringify(eleve))
+    return this.http.put<Eleve>(this.url + eleve._id, eleve, { withCredentials: true });
+  }
+
+  deleteTimer(eleve:Eleve):Observable<Eleve>{
+    return this.http.delete<Eleve>(this.url + eleve._id, {withCredentials: true});
+  }
 
   getTimerCookieName():Observable<any>{
-    return this.http.get(this.url+"/session", {withCredentials: true});
+    return this.http.get(this.url+"session", {withCredentials: true});
+  }
+  getById(id:string):Observable<Eleve>{
+    return this.http.get<Eleve>(this.url + id, {withCredentials: true});
   }
 }

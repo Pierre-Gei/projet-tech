@@ -1,5 +1,5 @@
 export interface Eleve {
     _id?: string;
     name: string;
-    time: [];
+    time: { name: string; time: string; }[]
 }

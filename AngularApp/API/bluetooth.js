@@ -17,6 +17,10 @@ wss.on('connection', (ws) => {
     message = JSON.parse(message);
     console.log('received: ', message);
 
+    if(message.message.trim() == ""){
+      console.log("message vide");
+      return;
+    }
     if (message.message == 'connexion') {
       if (isConnected) {
         console.log("already connected");
@@ -94,7 +98,7 @@ bluetoothSerial.on('data', function (data) {
   console.log('Bluetooth data received:', data.toString('utf8'));
   // Envoyer les données au client WebSocket
   const message = { message: data.toString('utf8') };
-  if(message.message !== ''){
+  if(message.message.trim() !== '' && message.message){
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(message));
