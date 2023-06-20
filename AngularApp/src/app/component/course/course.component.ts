@@ -90,14 +90,9 @@ export class CourseComponent implements OnInit, OnDestroy {
       this.coockie.id = response.id;
       this.listeEleve.name = this.coockie.name;
       this.listeEleve._id = this.coockie.id;
-      console.log("coockie ID : "+this.coockie.id);
-      console.log("coockie name : "+this.coockie.name);
-      console.log("listeEleve ID : "+this.listeEleve._id);
-      console.log("listeEleve name : "+this.listeEleve.name);
       if(this.coockie.name != undefined){
         this.timerService.getById(this.coockie.id).subscribe(response => {
           this.listeEleve.time = response.time;
-          console.log("listeEleve time : "+this.listeEleve.time);
         });
       }
     });
@@ -196,9 +191,9 @@ export class CourseComponent implements OnInit, OnDestroy {
   sortTimes() {
     this.listeEleve.time.sort((a: any, b: any) => {
       // Convertir les temps en millisecondes pour effectuer la comparaison
-      const timeA = moment.duration(a.time).asMilliseconds();
-      const timeB = moment.duration(b.time).asMilliseconds();
-
+      const timeA = moment(a.time, 'mm:ss:SSS').valueOf();
+      const timeB = moment(b.time, 'mm:ss:SSS').valueOf();
+  
       // Comparer les temps et renvoyer le résultat de la comparaison
       if (timeA < timeB) {
         return -1;
@@ -209,9 +204,10 @@ export class CourseComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   deleteTime(time: any) {
     this.listeEleve.time = this.listeEleve.time.filter((t: any) => t !== time);
-    this.timerService.updateProduct(this.listeEleve);
+    this.timerService.updateProduct(this.listeEleve).subscribe();
   }
 
   createListTime(name: string) {
@@ -229,10 +225,7 @@ export class CourseComponent implements OnInit, OnDestroy {
   }
 
   updateListTimeBDD(){
-    console.log("updateListTimeBDD")
-    console.log("ListeEleve : " + JSON.stringify(this.listeEleve));
-    console.log("id " + this.listeEleve._id + " name " + this.listeEleve.name + " time " + this.listeEleve.time);
-  
+    
     this.timerService.updateProduct(this.listeEleve).subscribe();
   }
 }

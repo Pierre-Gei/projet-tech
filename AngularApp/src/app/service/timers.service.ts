@@ -18,7 +18,6 @@ export class TimersService {
     return this.http.post<Eleve>(this.url, eleve, {withCredentials: true});
   }
   updateProduct(eleve: Eleve): Observable<Eleve> {
-    console.log("eleeeevvvee : " + JSON.stringify(eleve))
     return this.http.put<Eleve>(this.url + eleve._id, eleve, { withCredentials: true });
   }
 

@@ -21,7 +21,7 @@ wss.on('connection', (ws) => {
       console.log("message vide");
       return;
     }
-    if (message.message == 'connexion') {
+    if (message.message.startsWith('connexion')) {
       if (isConnected) {
         console.log("already connected");
         return;
@@ -48,10 +48,10 @@ wss.on('connection', (ws) => {
 
       start(); // Appeler la fonction start pour démarrer le processus
     }
-    else if (message.message == 'start') {
+    else if (message.message.startsWith('start')) {
       sendBluetoothMessage("start");
     }
-    else if (message.message == 'isConnected') {
+    else if (message.message.startsWith('isConnected')) {
 
       wss.clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
@@ -61,10 +61,10 @@ wss.on('connection', (ws) => {
       }
       );
     }
-    else if (message.message == 'stop') {
+    else if (message.message.startsWith('stop')) {
       sendBluetoothMessage("stop");
     }
-    else if (message.message == 'macAddress') {
+    else if (message.message.startsWith('macAddress')) {
       if (!isConnected) {
         let macAddress = message.macAddress;
         console.log("macAddress" + macAddress);
@@ -113,7 +113,7 @@ bluetoothSerial.on('closed', function () {
   // Envoyer un message au client WebSocket pour indiquer la connexion Bluetooth fermée
   wss.clients.forEach((client) => {
     if (client.readyState === WebSocket.OPEN) {
-      message = { message: "isConnected", isConnected: isConnected };
+      const message = { message: "isConnected", isConnected: isConnected };
       client.send(JSON.stringify(message));
     }
   }
@@ -159,7 +159,6 @@ function connectToBluetoothDevice() {
 function cleanupBluetoothEventListeners() {
   return new Promise((resolve, reject) => {
     if (foundEventListener) {
-      bluetoothSerial.off('found', foundEventListener);
       foundEventListener = null;
     }
 
