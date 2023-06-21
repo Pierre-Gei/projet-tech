@@ -1,34 +1,52 @@
-<div>
+<!-- <div>
     <input type="text" [(ngModel)]="coockie.name">
-    <button (click) = "createListTime(coockie.name)">envoie</button>
-</div>
-<div class="container paddingDiv d-flex flex-column justify-content-center">
-    <div class="row text-center">
-        <h1 class="taille">{{timeElapsedDisplay}}</h1>
-    </div>
-    <div class="row marginDiv">
-        <button class="btn  btn-success col marginButton" (click)="isStarted ? null : sendMessage('start'); isStarted = true" [disabled]="isStarted">LANCER</button>
-        <button class="btn btn-danger col marginButton" (click)="isStarted ? sendMessage('stop') : null" [disabled]="!isStarted">STOP</button>
-        <button mat-button class="btn btn-primary col d-flex justify-content-center align-items-center" (click)="onConnexion();loading = true">
-            Connexion
-            <mat-spinner class="marginSpinner" diameter="20" strokeWidth="3" color="warn" *ngIf="loading && !isConnected"></mat-spinner>
-            <mat-icon class="marginSpinner" *ngIf="isConnected">check_circle_outline</mat-icon>
-            <mat-icon class="marginSpinner red" *ngIf="!isConnected && !loading">highlight_off</mat-icon>
-          </button>
-    </div>
-</div>
+    <button (click)="createListTime(coockie.name)">envoie</button>
+</div> -->
+<div class="container paddingDiv">
+    <div class="row h-100">
+        <div class="col-6 d-flex flex-column justify-content-center">
+            <div class="row justify-content-center">
+                <button class="btn btn-success col-3 marginButton btnBorderRadius" (click)="updateListTimeBDD()">Sauvegarder</button>
+                <button class="btn btn-success col-3 marginButton btnBorderRadius">Charger</button>
+                <button class="btn btn-success col-3 btnBorderRadius">Nouveau</button>
+            </div>
+            <div class="row text-center">
+                <h1 class="taille">{{timeElapsedDisplay}}</h1>
+            </div>
+            <div class="row marginDiv justify-content-center">
+                
+                <button class="btn btn-success col-3 marginButton d-flex justify-content-center align-items-center btnBorderRadius"
+                    (click)="isStarted ? null : sendMessage('start'); isStarted = true"
+                    [disabled]="isStarted"><mat-icon>play_arrow</mat-icon></button>
+                <button class="btn btn-danger col-3 marginButton d-flex justify-content-center align-items-center btnBorderRadius" (click)="isStarted ? sendMessage('stop') : null"
+                    [disabled]="!isStarted"><mat-icon>stop</mat-icon></button>
+                <button mat-button class="btn btn-primary col-3 d-flex justify-content-center align-items-center btnBorderRadius"
+                    (click)="onConnexion();loading = true">
+                    <mat-icon>bluetooth_searching</mat-icon>
+                    <mat-spinner class="marginSpinner" diameter="20" strokeWidth="3" color="warn"
+                        *ngIf="loading && !isConnected"></mat-spinner>
+                    <mat-icon class="marginSpinner" *ngIf="isConnected">check_circle_outline</mat-icon>
+                    <mat-icon class="marginSpinner red" *ngIf="!isConnected && !loading">highlight_off</mat-icon>
+                </button>
+            </div>
+        </div>
 
-
-<div class="container d-flex flex-column justify-content-center marginContainer">
-    <div class="row text-center">
-        <div class="col-12">
-            <h1 class="titleRanking">Classement</h1>
+        <div class="col-6">
+            <div class="row text-center">
+                <div class="col-12">
+                    <h1 class="titleRanking text-center">Classement</h1>
+                </div>
+            </div>
+            <div class="row marginRow" *ngFor="let eleve of listeEleve.time">
+                <input type="text" [(ngModel)]="eleve.name" class="offset-lg-3 col-lg-2 col-4 inputBorder text-center"
+                    [ngClass]="{'highligthLeft':lastTime == eleve}">
+                <div class="col-lg-2 col-4 d-flex align-items-center" [ngClass]="{'highligthRight':lastTime == eleve}">
+                    {{eleve.time}}</div>
+                <div class="col-lg-2 col-4 d-flex align-items-center">
+                    <mat-icon class="marginSpinner red hoverPointer"  (click)="deleteTime(eleve)">highlight_off</mat-icon>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="row marginRow" *ngFor="let eleve of listeEleve.time">
-                <input type="text" [(ngModel)]="eleve.name"  class="offset-lg-3 col-lg-2 col-4 inputBorder text-center" [ngClass]="{'highligthLeft':lastTime == eleve}">
-                <div class="col-lg-2 col-4 d-flex align-items-center" [ngClass]="{'highligthRight':lastTime == eleve}">{{eleve.time}}</div>
-                <div class="col-lg-2 col-4 d-flex align-items-center"><button class="btn btn-danger btnDim d-flex align-items-center"(click)="deleteTime(eleve)">Supprimer</button></div>
-    </div>
 </div>
-<button (click)="updateListTimeBDD()">Rafraichir</button>
+<!-- <button (click)="updateListTimeBDD()">Rafraichir</button> -->

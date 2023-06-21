@@ -152,13 +152,17 @@ export class CourseComponent implements OnInit, OnDestroy {
           this.loading = false;
           const dialogRef = this.dialog.open(ConnexionComponent, {
             width: '500px',
-            data: this.macAddress
+            data: this.macAddress,
+            disableClose: true
           });
           dialogRef.afterClosed().subscribe(result => {
             if (result == undefined) {
               return;
             }
-            this.loading = true;
+            if(result != '' && result != undefined){
+              this.loading = true;
+            }
+            
             let message = {
               message: "macAddress",
               macAddress: result
@@ -172,6 +176,7 @@ export class CourseComponent implements OnInit, OnDestroy {
       }, 100);
     }).finally(() => {
       this.connecting = false;
+      console.log("connexion " + this.connecting);
 
     });
   }

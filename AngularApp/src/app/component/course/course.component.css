@@ -12,6 +12,7 @@
 }
 .paddingDiv {
     padding-top: 20px;
+    height: 100%;
 }
 
 .marginRow {
@@ -32,7 +33,7 @@
     height: 75%;
 }
 .marginContainer {
-    margin-top: 20px;
+    margin-top: 50px;
 }
 .titleRanking{
     font-size : 4em;
@@ -44,4 +45,14 @@
 }
 .red {
     color: red;
+}
+.hoverPointer{
+    cursor: pointer;
+}
+.disabled-icon{
+    opacity: 0.5; /* Adjust the opacity or other styles as desired */
+    pointer-events: none; /* Prevent pointer events on the icon */
+}
+.btnBorderRadius {
+    border-radius: 20px;
 }

@@ -159,6 +159,7 @@ function connectToBluetoothDevice() {
 function cleanupBluetoothEventListeners() {
   return new Promise((resolve, reject) => {
     if (foundEventListener) {
+      bluetoothSerial.off('found', foundEventListener);
       foundEventListener = null;
     }
 
