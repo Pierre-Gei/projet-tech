@@ -13,6 +13,7 @@ export class ChargementComponent {
   Listes:any[] = [];
   
   constructor(@Inject(MAT_DIALOG_DATA) public liste:any, public dialogRef: MatDialogRef<ChargementComponent>, private timerService:TimersService) { }
+  
   ngOnInit() {
     this.timerService.getTimer().subscribe((data:any) => {
       this.Listes = data;

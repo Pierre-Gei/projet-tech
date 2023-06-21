@@ -9,6 +9,7 @@ import { ConnexionComponent } from '../connexion/connexion.component';
 import { Eleve } from 'src/app/model/eleve';
 import { TimersService } from 'src/app/service/timers.service';
 import { ChargementComponent } from '../chargement/chargement.component';
+import { CreationListeComponent } from '../creation-liste/creation-liste.component';
 
 @Component({
   selector: 'app-course',
@@ -179,14 +180,13 @@ export class CourseComponent implements OnInit, OnDestroy {
     });
   }
 
-  chargement() {
-    let id = "";
+  loadingLists() {
     const dialogRef = this.dialog.open(ChargementComponent, {
       width: '500px',
       disableClose: true
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result == undefined) {
+      if (result == undefined || result == '') {
         return;
       }
       this.timerService.getById(result).subscribe(response => {
@@ -199,6 +199,20 @@ export class CourseComponent implements OnInit, OnDestroy {
       });
     });
   }
+
+  createCourse() {
+    const dialogRef = this.dialog.open(CreationListeComponent, {
+      width: '500px',
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == undefined || result == '') {
+        return;
+      }
+      this.createListTime(result);
+    });
+  }
+  
 
   hasChanged(macAddress: any, previousMacAddress: any) {
     if (macAddress.length !== previousMacAddress.length) {

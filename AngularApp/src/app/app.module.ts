@@ -13,6 +13,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatIconModule} from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
 import { ChargementComponent } from './component/chargement/chargement.component';
+import { CreationListeComponent } from './component/creation-liste/creation-liste.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { ChargementComponent } from './component/chargement/chargement.component
     CourseComponent,
     AccueilComponent,
     ConnexionComponent,
-    ChargementComponent
+    ChargementComponent,
+    CreationListeComponent
   ],
   imports: [
     BrowserModule,
