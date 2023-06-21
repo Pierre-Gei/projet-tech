@@ -12,13 +12,15 @@ import { FormsModule } from '@angular/forms';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatIconModule} from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
+import { ChargementComponent } from './component/chargement/chargement.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CourseComponent,
     AccueilComponent,
-    ConnexionComponent
+    ConnexionComponent,
+    ChargementComponent
   ],
   imports: [
     BrowserModule,

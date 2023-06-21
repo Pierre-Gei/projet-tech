@@ -22,6 +22,14 @@ app.put('/timer/:id', timerPut);
 app.get('/timer/session', (req, res) => {
     res.status(200).json({name:req.session.name, id:req.session.nameId});
 });
+app.post('/timer/session', (req, res) => {
+    console.log("Coockie post")
+    req.session.name = req.body.name;
+    req.session.nameId = req.body.id;
+    res.status(200).json({name:req.session.name, id:req.session.nameId});
+    console.log("Cookie name " + req.session.name + "Cookie id " + req.session.nameId)
+    
+});
 app.get('/timer/:id', timerGetById);
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));

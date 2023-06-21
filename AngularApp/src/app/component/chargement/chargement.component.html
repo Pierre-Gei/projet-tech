@@ -1,0 +1,7 @@
+<h2 mat-dialog-title>Listes sauvegardées</h2>
+<mat-dialog-content class="mat-typography">
+    <div *ngFor="let liste of Listes" (click)="selectListe(liste)" [ngClass]="{'colorBlue': liste._id == selectedListe}" class="pointer">{{liste.name}}</div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click) = "closeDialog()" >Fermer</button>
+</mat-dialog-actions>

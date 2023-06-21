@@ -31,4 +31,7 @@ export class TimersService {
   getById(id:string):Observable<Eleve>{
     return this.http.get<Eleve>(this.url + id, {withCredentials: true});
   }
+  setTimerCookieName(name:any):Observable<any>{
+    return this.http.post(this.url+"session", name, {withCredentials: true});
+  }
 }

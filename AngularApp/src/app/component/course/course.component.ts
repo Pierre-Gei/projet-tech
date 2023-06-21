@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { ConnexionComponent } from '../connexion/connexion.component';
 import { Eleve } from 'src/app/model/eleve';
 import { TimersService } from 'src/app/service/timers.service';
+import { ChargementComponent } from '../chargement/chargement.component';
 
 @Component({
   selector: 'app-course',
@@ -171,13 +172,31 @@ export class CourseComponent implements OnInit, OnDestroy {
             resolve();
           });
         }
-
-
       }, 100);
     }).finally(() => {
       this.connecting = false;
       console.log("connexion " + this.connecting);
+    });
+  }
 
+  chargement() {
+    let id = "";
+    const dialogRef = this.dialog.open(ChargementComponent, {
+      width: '500px',
+      disableClose: true
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result == undefined) {
+        return;
+      }
+      this.timerService.getById(result).subscribe(response => {
+        this.listeEleve.time = response.time;
+        this.listeEleve.name = response.name;
+        this.listeEleve._id = response._id;
+        this.coockie.name = response.name;
+        this.coockie.id = response._id;
+        this.timerService.setTimerCookieName(this.coockie).subscribe();
+      });
     });
   }
 
