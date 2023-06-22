@@ -14,7 +14,6 @@
     padding-top: 20px;
     height: 100%;
 }
-
 .marginRow {
     margin-top: 5px;
 }
@@ -55,4 +54,17 @@
 }
 .btnBorderRadius {
     border-radius: 20px;
+}
+.borderRight{
+    border-right: 2px solid #c5c4c4;
+}
+.sizeTextTime{
+    font-size: 1.5em;
+}
+.scrollBar {
+    overflow-y: scroll;
+    max-height: 100%;
+}
+.heightRow{
+    height: 80%;
 }
