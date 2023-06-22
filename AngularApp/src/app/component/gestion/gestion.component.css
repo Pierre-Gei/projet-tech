@@ -1,0 +1,25 @@
+.scrollBar {
+    overflow-y: scroll;
+    max-height: 100%;
+}
+.heightRow{
+    height: 80%;
+}
+.paddingDiv {
+    padding-top: 20px;
+    height: 100%;
+}
+.red{
+    color: red;
+}
+.hoverPointer{
+    cursor: pointer;
+}
+.titleRanking{
+    font-size : 4em;
+    line-height: 1;
+    max-width: 100%;
+}
+.sizeTextTime{
+    font-size: 1.5em;
+}

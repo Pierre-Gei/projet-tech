@@ -14,6 +14,7 @@ import {MatIconModule} from '@angular/material/icon';
 import { HttpClientModule } from '@angular/common/http';
 import { ChargementComponent } from './component/chargement/chargement.component';
 import { CreationListeComponent } from './component/creation-liste/creation-liste.component';
+import { GestionComponent } from './component/gestion/gestion.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { CreationListeComponent } from './component/creation-liste/creation-list
     AccueilComponent,
     ConnexionComponent,
     ChargementComponent,
-    CreationListeComponent
+    CreationListeComponent,
+    GestionComponent
   ],
   imports: [
     BrowserModule,

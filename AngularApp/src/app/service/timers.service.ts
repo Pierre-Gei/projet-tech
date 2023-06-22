@@ -11,8 +11,8 @@ export class TimersService {
   private url:string = "http://localhost:3000/timer/";
   constructor(private http:HttpClient) { }
 
-  getTimer():Observable<Eleve>{
-    return this.http.get<Eleve>(this.url, {withCredentials: true});
+  getTimer():Observable<Array<Eleve>>{
+    return this.http.get<Array<Eleve>>(this.url, {withCredentials: true});
   }
   createTimer(eleve:Eleve):Observable<Eleve>{
     return this.http.post<Eleve>(this.url, eleve, {withCredentials: true});

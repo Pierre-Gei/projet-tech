@@ -69,7 +69,7 @@
     height: 80%;
 }
 .backgroundImage{
-    background-image: url("src\assets\pictures\chronometre-chrono-sticker-autocollant.jpg");
+    background-image: url("src\assets\pictures\chronometre.png");
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
