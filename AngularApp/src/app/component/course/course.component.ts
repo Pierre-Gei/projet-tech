@@ -32,14 +32,15 @@ export class CourseComponent implements OnInit, OnDestroy {
   connecting: boolean = false;
   lastTime = {
     name: "",
-    time: ""
+    time: "",
+    midTime: ""
   }
   isStarted: boolean = false;
   loading: boolean = false;
   listeEleve: Eleve = {
     _id: "",
     name: "",
-    time: [{ name: "aaa", time: "eeee"}]
+    time: []
   }
   coockie:any ={
     name: "",
@@ -61,6 +62,9 @@ export class CourseComponent implements OnInit, OnDestroy {
           }
           else if (data.message.startsWith('stopped')) {
             this.stopTimer();
+          }
+          else if (data.message.startsWith('boutton') && this.isStarted) {
+            this.midTimer();
           }
           else if (data.message == "isConnected") {
             this.isConnected = data.isConnected;
@@ -116,14 +120,17 @@ export class CourseComponent implements OnInit, OnDestroy {
 
   stopTimer() {
     clearInterval(this.timer);
-    this.lastTime = {
-      name: "",
-      time: this.timeElapsedDisplay
-    }
+    this.lastTime.name = "";
+    this.lastTime.time = this.timeElapsedDisplay;
     this.listeEleve.time.push(this.lastTime);
     this.sortTimes();
     this.updateListTimeBDD();
     this.isStarted = false;
+  }
+
+  midTimer() {
+    if(this.lastTime.midTime == "")
+    this.lastTime.midTime = this.timeElapsedDisplay;
   }
 
   sendMessage(message: any) {
