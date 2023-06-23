@@ -55,6 +55,7 @@ export class CourseComponent implements OnInit, OnDestroy {
   cptCapteur: number = 0;
   
   gameMode : boolean = false;
+  isSaved : boolean = false;
 
   constructor(public dialog: MatDialog, private timerService: TimersService) {
     this.socket$ = webSocket('ws://localhost:8080');
@@ -72,20 +73,20 @@ export class CourseComponent implements OnInit, OnDestroy {
           else if (data.message.startsWith('stopped')) {
             if(this.cptCapteur == 0 && this.cptButton == 1) {
               this.cptButton = 0;
-              this.stopTimer();
+              this.stopTimer(0);
             }
             else if(this.cptCapteur == 0 && this.cptButton == 0) {
-              this.midTimer();
+              this.midTimer(0);
               this.cptCapteur++;
             }
           }
           else if (data.message.startsWith('boutton') && this.isStarted) {
             if(this.cptButton == 0 && this.cptCapteur == 1) {
               this.cptCapteur = 0;
-              this.stopTimer();
+              this.stopTimer(1);
             }
             else if (this.cptButton == 0 && this.cptCapteur == 0) {
-              this.midTimer();
+              this.midTimer(1);
               this.cptButton++;
             }
           }
@@ -132,6 +133,7 @@ export class CourseComponent implements OnInit, OnDestroy {
   }
 
   startTimer() {
+    this.isSaved = false;
     this.lastTime = {
       name: "",
       time: "",
@@ -149,19 +151,50 @@ export class CourseComponent implements OnInit, OnDestroy {
     }, 1);
   }
 
-  stopTimer() {
+  stopTimer(difficulty: number) {
+    this.isSaved = false;
     clearInterval(this.timer);
     this.lastTime.name = "";
     this.lastTime.time = this.timeElapsedDisplay;
+    if(difficulty == 0){
+      let millisecondes = this.convertToMs(this.timeElapsedDisplay);
+      let midTimeMs = this.convertToMs(this.lastTime.midTime);
+      console.log("Difficulté : 0");
+      console.log("millisecondes : " + millisecondes);
+      console.log("midTimeMs : " + midTimeMs);
+      this.lastTime.pointEnd = Math.round(10000 * Math.exp(-((millisecondes - midTimeMs)  / 10000)));
+    }
+    else if(difficulty == 1){
+      let millisecondes = this.convertToMs(this.timeElapsedDisplay);
+      let midTimeMs = this.convertToMs(this.lastTime.midTime);
+      console.log("Difficulté : 1");
+      console.log("millisecondes : " + millisecondes);
+      console.log("midTimeMs : " + midTimeMs);
+      this.lastTime.pointEnd = Math.round(15000 * Math.exp(-((millisecondes - midTimeMs) / 10000)));
+    }
+    this.lastTime.pointTot = this.lastTime.pointEnd + this.lastTime.pointMid;
     this.listeEleve.time.push(this.lastTime);
     this.sortTimes();
     this.updateListTimeBDD();
     this.isStarted = false;
   }
 
-  midTimer() {
-    if(this.lastTime.midTime == "")
-    this.lastTime.midTime = this.timeElapsedDisplay;
+  midTimer(difficulty: number) {
+    if(this.lastTime.midTime == "" && difficulty == 0){
+      this.lastTime.midTime = this.timeElapsedDisplay;
+      let millisecondes = this.convertToMs(this.lastTime.midTime);
+      this.lastTime.pointMid = Math.round(10000 * Math.exp(-(millisecondes / 10000)));
+    }
+    else if(this.lastTime.midTime == "" && difficulty == 1){
+      this.lastTime.midTime = this.timeElapsedDisplay;
+      let millisecondes = this.convertToMs(this.lastTime.midTime);
+      this.lastTime.pointMid = Math.round(15000 * Math.exp(-(millisecondes / 10000)));
+    }
+  }
+
+  convertToMs(time: string): number {
+    const [minutes, seconds, milliseconds] = time.split(':').map(Number);
+    return (minutes * 60 + seconds) * 1000 + milliseconds;
   }
 
   sendMessage(message: any) {
@@ -219,6 +252,7 @@ export class CourseComponent implements OnInit, OnDestroy {
   }
 
   loadingLists() {
+    this.isSaved = false;
     const dialogRef = this.dialog.open(ChargementComponent, {
       width: '500px',
       disableClose: true
@@ -239,6 +273,7 @@ export class CourseComponent implements OnInit, OnDestroy {
   }
 
   createCourse() {
+    this.isSaved = false;
     const dialogRef = this.dialog.open(CreationListeComponent, {
       width: '500px',
       disableClose: true
@@ -281,12 +316,32 @@ export class CourseComponent implements OnInit, OnDestroy {
     });
   }
 
+  sortTimesByPoint() {
+    this.listeEleve.time.sort((a: any, b: any) => {
+      // Convertir les temps en millisecondes pour effectuer la comparaison
+      const pointA = a.pointTot;
+      const pointB = b.pointTot;
+  
+      // Comparer les temps et renvoyer le résultat de la comparaison
+      if (pointA > pointB) {
+        return -1;
+      } else if (pointA < pointB) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+  }
+
+
   deleteTime(time: any) {
+    this.isSaved = false;
     this.listeEleve.time = this.listeEleve.time.filter((t: any) => t !== time);
     this.timerService.updateProduct(this.listeEleve).subscribe();
   }
 
   createListTime(name: string) {
+    this.isSaved = false;
     this.listeEleve = {
       name: name,
       time: []
@@ -303,9 +358,6 @@ export class CourseComponent implements OnInit, OnDestroy {
   updateListTimeBDD(){
     
     this.timerService.updateProduct(this.listeEleve).subscribe();
-  }
-
-  log(){
-    console.log("APPPPPPPPPPPPUIE")
+    this.isSaved = true;
   }
 }

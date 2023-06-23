@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-6">
             <div class="row justify-content-center">
-                <button class="btn btn-success col-3 marginButton btnBorderRadius" (click)="updateListTimeBDD()">Sauvegarder</button>
+                <button class="btn btn-success col-3 marginButton btnBorderRadius d-flex justify-content-center align-items-center" (click)="updateListTimeBDD()">Sauvegarder<mat-icon class="marginSpinner" *ngIf="isSaved">check_circle_outline</mat-icon></button>
                 <button class="btn btn-success col-3 marginButton btnBorderRadius" (click)="loadingLists()">Charger</button>
                 <button class="btn btn-success col-3 btnBorderRadius" (click)="createCourse()">Nouveau</button>
             </div>
@@ -11,7 +11,7 @@
             <div class="row text-center">
                 <div class="col-12">
                     <h1 class="titleRanking text-center">Classement </h1>
-                    <mat-slide-toggle [(ngModel)] = "gameMode" (click)="log()">Points</mat-slide-toggle>
+                    <mat-slide-toggle [(ngModel)] = "gameMode" (click)="gameMode ? sortTimesByPoint():sortTimes()">Points</mat-slide-toggle>
                 </div>
             </div>
         </div>
@@ -26,7 +26,7 @@
                 <button class="btn btn-success col-2 marginButton d-flex justify-content-center align-items-center btnBorderRadius"
                     (click)="isStarted ? null : sendMessage('start'); isStarted = true"
                     [disabled]="isStarted"><mat-icon>play_arrow</mat-icon></button>
-                <button class="btn btn-danger col-2 marginButton d-flex justify-content-center align-items-center btnBorderRadius" (click)="isStarted ? sendMessage('stop') : null; stopTimer()"
+                <button class="btn btn-danger col-2 marginButton d-flex justify-content-center align-items-center btnBorderRadius" (click)="isStarted ? sendMessage('stop') : null; stopTimer(0)"
                     [disabled]="!isStarted"><mat-icon>stop</mat-icon></button>
                 <button mat-button class="btn btn-primary col-2 d-flex justify-content-center align-items-center btnBorderRadius"
                     (click)="onConnexion();loading = true">
@@ -56,10 +56,11 @@
             <div class="row marginRow justify-content-center" *ngFor="let eleve of listeEleve.time">
                 <input type="text" [(ngModel)]="eleve.name" class="col-lg-2 col-4 sizeTextTime"
                     [ngClass]="{'highligthLeft':lastTime == eleve, 'inputBorder':eleve.name!=''}" placeholder="Prénom...">
-                <div class="col-lg-2 col-4 d-flex align-items-center sizeTextTime" [ngClass]="{'highligthRight':lastTime == eleve}">
-                    {{eleve.midTime}}</div>
-                <div class="col-lg-2 col-4 d-flex align-items-center sizeTextTime" [ngClass]="{'highligthRight':lastTime == eleve}">{{eleve.time}}</div>
-                <div class="col-lg-2 col-4 d-flex align-items-center justify-content-center">
+                <div class="col-lg-2 col-3 d-flex align-items-center sizeTextTime" [ngClass]="{'highligthRight':lastTime == eleve}">
+                    {{eleve.pointMid}}</div>
+                <div class="col-lg-2 col-3 d-flex align-items-center sizeTextTime" [ngClass]="{'highligthRight':lastTime == eleve}">{{eleve.pointEnd}}</div>
+                <div class="col-lg-2 col-3 d-flex align-items-center sizeTextTime" [ngClass]="{'highligthRight':lastTime == eleve}">{{eleve.pointTot}}</div>
+                <div class="col-lg-2 col-3 d-flex align-items-center justify-content-center">
                     <mat-icon class="marginSpinner red hoverPointer"  (click)="deleteTime(eleve)">highlight_off</mat-icon>
                 </div>
             </div>

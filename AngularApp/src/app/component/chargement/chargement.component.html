@@ -3,5 +3,5 @@
   <div *ngFor="let liste of Listes" (click)="selectListe(liste)" [ngClass]="{'colorBlue': liste._id == selectedListe}" class="pointer">{{liste.name}}</div>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button (click)="closeDialog()">Fermer</button>
+  <button mat-button class="btn" (click)="closeDialog()">Fermer</button>
 </mat-dialog-actions>

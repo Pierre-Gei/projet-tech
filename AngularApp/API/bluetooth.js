@@ -107,6 +107,11 @@ bluetoothSerial.on('data', function (data) {
 }
 });
 
+bluetoothSerial.on('error', function (error) {
+  console.log('Une erreur s\'est produite lors de la connexion Bluetooth :', error);
+});
+
+
 bluetoothSerial.on('closed', function () {
   console.log('Connexion Bluetooth fermée');
   isConnected = false;
