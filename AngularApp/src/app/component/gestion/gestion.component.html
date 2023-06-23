@@ -13,7 +13,7 @@
         <div class="col-6 scrollBar">
             <div class="container-fluid">
                 <div class="row justify-content-center" *ngFor="let course of listeCourse">
-                    <div class="col-2 hoverPointer sizeTextTime " (click)="selectCourse(course)">
+                    <div class="col-2 hoverPointer sizeTextTime hoverBlue" (click)="selectCourse(course)" [ngClass]="{'colorBlue':course._id == listeEleve._id}">
                         {{course.name}}
                     </div>
                     <div class="col-2">

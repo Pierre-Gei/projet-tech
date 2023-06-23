@@ -12,7 +12,7 @@ export class GestionComponent {
   listeEleve:Eleve = {
     _id:"",
     name:"",
-    time:[]
+    time:[],
   }
   constructor(private timerService:TimersService) { }
 

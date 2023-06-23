@@ -15,6 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ChargementComponent } from './component/chargement/chargement.component';
 import { CreationListeComponent } from './component/creation-liste/creation-liste.component';
 import { GestionComponent } from './component/gestion/gestion.component';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { GestionComponent } from './component/gestion/gestion.component';
     FormsModule,
     MatProgressSpinnerModule,
     MatIconModule,
-    HttpClientModule
+    HttpClientModule,
+    MatSlideToggleModule
   ],
   providers: [],
   bootstrap: [AppComponent]

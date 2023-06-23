@@ -23,3 +23,9 @@
 .sizeTextTime{
     font-size: 1.5em;
 }
+.hoverBlue:hover {
+    color: #007bff;
+}
+.colorBlue {
+    color: #007bff;
+}

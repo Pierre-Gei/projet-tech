@@ -11,6 +11,7 @@ import { TimersService } from 'src/app/service/timers.service';
 import { ChargementComponent } from '../chargement/chargement.component';
 import { CreationListeComponent } from '../creation-liste/creation-liste.component';
 
+
 @Component({
   selector: 'app-course',
   templateUrl: './course.component.html',
@@ -33,7 +34,10 @@ export class CourseComponent implements OnInit, OnDestroy {
   lastTime = {
     name: "",
     time: "",
-    midTime: ""
+    midTime: "",
+    pointTot: 0,
+    pointMid: 0,
+    pointEnd: 0
   }
   isStarted: boolean = false;
   loading: boolean = false;
@@ -46,6 +50,11 @@ export class CourseComponent implements OnInit, OnDestroy {
     name: "",
     id : ""
   }
+
+  cptButton: number = 0;
+  cptCapteur: number = 0;
+  
+  gameMode : boolean = false;
 
   constructor(public dialog: MatDialog, private timerService: TimersService) {
     this.socket$ = webSocket('ws://localhost:8080');
@@ -61,10 +70,24 @@ export class CourseComponent implements OnInit, OnDestroy {
             this.startTimer();
           }
           else if (data.message.startsWith('stopped')) {
-            this.stopTimer();
+            if(this.cptCapteur == 0 && this.cptButton == 1) {
+              this.cptButton = 0;
+              this.stopTimer();
+            }
+            else if(this.cptCapteur == 0 && this.cptButton == 0) {
+              this.midTimer();
+              this.cptCapteur++;
+            }
           }
           else if (data.message.startsWith('boutton') && this.isStarted) {
-            this.midTimer();
+            if(this.cptButton == 0 && this.cptCapteur == 1) {
+              this.cptCapteur = 0;
+              this.stopTimer();
+            }
+            else if (this.cptButton == 0 && this.cptCapteur == 0) {
+              this.midTimer();
+              this.cptButton++;
+            }
           }
           else if (data.message == "isConnected") {
             this.isConnected = data.isConnected;
@@ -109,6 +132,14 @@ export class CourseComponent implements OnInit, OnDestroy {
   }
 
   startTimer() {
+    this.lastTime = {
+      name: "",
+      time: "",
+      midTime: "",
+      pointTot: 0,
+      pointMid: 0,
+      pointEnd: 0
+    }
     const startTime = moment(); // Utilisation d'une nouvelle variable locale
     this.timer = setInterval(() => {
       const currentTime = moment();
@@ -272,5 +303,9 @@ export class CourseComponent implements OnInit, OnDestroy {
   updateListTimeBDD(){
     
     this.timerService.updateProduct(this.listeEleve).subscribe();
+  }
+
+  log(){
+    console.log("APPPPPPPPPPPPUIE")
   }
 }
