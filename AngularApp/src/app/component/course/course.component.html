@@ -41,18 +41,31 @@
 
         <div class="col-6 scrollBar">
             <div class="container-fluid mt-3" *ngIf="!gameMode">
+                <div class="row justify-content-center">
+                    <div class="col-lg-2 col-4"><h2>Prénom</h2></div>
+                    <div class="col-lg-2 col-4"><h2>Milieu</h2></div>
+                    <div class="col-lg-2 col-4"><h2>Fin</h2></div>
+                    <div class="col-lg-2 col-4"><h2>Actions</h2></div>
+                </div>
             <div class="row marginRow justify-content-center" *ngFor="let eleve of listeEleve.time">
                 <input type="text" [(ngModel)]="eleve.name" class="col-lg-2 col-4 sizeTextTime"
                     [ngClass]="{'highligthLeft':lastTime == eleve, 'inputBorder':eleve.name!=''}" placeholder="Prénom...">
                 <div class="col-lg-2 col-4 d-flex align-items-center sizeTextTime" [ngClass]="{'highligthRight':lastTime == eleve}">
                     {{eleve.midTime}}</div>
                 <div class="col-lg-2 col-4 d-flex align-items-center sizeTextTime" [ngClass]="{'highligthRight':lastTime == eleve}">{{eleve.time}}</div>
-                <div class="col-lg-2 col-4 d-flex align-items-center justify-content-center">
+                <div class="col-lg-2 col-4 d-flex align-items-center">
                     <mat-icon class="marginSpinner red hoverPointer"  (click)="deleteTime(eleve)">highlight_off</mat-icon>
                 </div>
             </div>
         </div>
         <div class="container-fluid mt-3" *ngIf="gameMode">
+            <div class="row justify-content-center">
+                <div class="col-lg-2 col-4"><h2>Prénom</h2></div>
+                <div class="col-lg-2 col-4"><h2>Milieu</h2></div>
+                <div class="col-lg-2 col-4"><h2>Fin</h2></div>
+                <div class="col-lg-2 col-4"><h2>Total</h2></div>
+                <div class="col-lg-2 col-4"><h2>Actions</h2></div>
+            </div>
             <div class="row marginRow justify-content-center" *ngFor="let eleve of listeEleve.time">
                 <input type="text" [(ngModel)]="eleve.name" class="col-lg-2 col-4 sizeTextTime"
                     [ngClass]="{'highligthLeft':lastTime == eleve, 'inputBorder':eleve.name!=''}" placeholder="Prénom...">
@@ -60,7 +73,7 @@
                     {{eleve.pointMid}}</div>
                 <div class="col-lg-2 col-3 d-flex align-items-center sizeTextTime" [ngClass]="{'highligthRight':lastTime == eleve}">{{eleve.pointEnd}}</div>
                 <div class="col-lg-2 col-3 d-flex align-items-center sizeTextTime" [ngClass]="{'highligthRight':lastTime == eleve}">{{eleve.pointTot}}</div>
-                <div class="col-lg-2 col-3 d-flex align-items-center justify-content-center">
+                <div class="col-lg-2 col-3 d-flex align-items-center ">
                     <mat-icon class="marginSpinner red hoverPointer"  (click)="deleteTime(eleve)">highlight_off</mat-icon>
                 </div>
             </div>
