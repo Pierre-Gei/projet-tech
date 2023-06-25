@@ -1,4 +1,6 @@
 {
     "port": "COM4",
-    "board": "arduino:avr:uno"
+    "board": "arduino:avr:uno",
+    "programmer": "avrispmkii",
+    "sketch": "connexionbouton\\connexionbouton.ino"
 }

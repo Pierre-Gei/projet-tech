@@ -9,7 +9,7 @@ String command = "";
 
 void setup() {
   Serial.begin(38400);
-  bt.begin(9600);
+  bt.begin(38400);
   pinMode(EnPin, OUTPUT);
   digitalWrite(EnPin, HIGH);
   delay(10);
