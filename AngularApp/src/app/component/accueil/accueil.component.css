@@ -2,6 +2,7 @@
     height: 100px;
     width: 400px;
     background: grey;
+    opacity : 0.6;
     border-radius: 20px;
     border: white 1px solid;
     text-align: center;
@@ -15,6 +16,6 @@
 }
 
 .case:hover{
-    background: #1E90FF;
+    background: #4694FF;
     cursor: pointer;
 }

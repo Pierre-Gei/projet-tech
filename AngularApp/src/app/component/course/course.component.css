@@ -1,3 +1,4 @@
+
 .taille{
     font-size: 6vw;
     margin:0;
@@ -43,7 +44,7 @@
     margin-left: 7px;
 }
 .red {
-    color: red;
+    color: #FF5353;
 }
 .hoverPointer{
     cursor: pointer;
@@ -68,6 +69,9 @@
 .heightRow{
     height: 80%;
 }
+.colorWhite{
+    color: white;
+}
 .backgroundImage{
     background-image: url("src\assets\pictures\chronometre.png");
     background-repeat: no-repeat;
@@ -75,4 +79,39 @@
     background-position: center;
     height: 100%;
     width: 100%;
+}
+.btnBlue {
+    background : #4694FF;
+    border : #4694FF;
+    color : white;
+}
+.btnBlue:hover {
+    opacity : 0.8;
+    translate: 0.3s;
+}
+.btnGreen {
+    background:#30E584;
+    border : #30E584;
+}
+.btnGreen:hover {
+    opacity : 0.8;
+    translate: 0.3s;
+}
+
+.btnRed {
+    background:#FF5353;
+    border : #FF5353;
+    color : white;
+}
+.btnRed:hover {
+    opacity : 0.8;
+    translate: 0.3s;
+}
+.btnOrange {
+    background:#FF457E;
+    color : white;
+}
+.btnOrange:hover {
+    opacity : 0.8;
+    translate: 0.3s;
 }

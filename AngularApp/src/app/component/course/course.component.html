@@ -5,16 +5,16 @@
     <div class="row">
         <div class="col-6">
             <div class="row justify-content-center">
-                <button class="btn btn-success col-3 marginButton btnBorderRadius d-flex justify-content-center align-items-center" (click)="updateListTimeBDD()">Sauvegarder<mat-icon class="marginSpinner" *ngIf="isSaved">check_circle_outline</mat-icon></button>
-                <button class="btn btn-success col-3 marginButton btnBorderRadius" (click)="loadingLists()">Charger</button>
-                <button class="btn btn-success col-3 btnBorderRadius" (click)="createCourse()">Nouveau</button>
+                <button class="btn btnRed col-3 marginButton btnBorderRadius d-flex justify-content-center align-items-center" (click)="updateListTimeBDD()">Sauvegarder<mat-icon class="marginSpinner" *ngIf="isSaved">check_circle_outline</mat-icon></button>
+                <button class="btn btnRed col-3 marginButton btnBorderRadius" (click)="loadingLists()">Charger</button>
+                <button class="btn btnRed col-3 btnBorderRadius" (click)="createCourse()">Nouveau</button>
             </div>
         </div>
         <div class="col-6">
             <div class="row text-center">
                 <div class="col-12">
                     <h1 class="titleRanking text-center">Classement </h1>
-                    <mat-slide-toggle [(ngModel)] = "gameMode" (click)="gameMode ? sortTimesByPoint():sortTimes()">Points</mat-slide-toggle>
+                    <mat-slide-toggle  [(ngModel)] = "gameMode" (click)="gameMode ? sortTimesByPoint():sortTimes()">Points</mat-slide-toggle>
                 </div>
             </div>
         </div>
@@ -26,14 +26,14 @@
             </div>
             <div class="row marginDiv justify-content-center">
                 
-                <button class="btn btn-success col-2 marginButton d-flex justify-content-center align-items-center btnBorderRadius"
+                <button class="btn btnGreen col-2 marginButton d-flex justify-content-center align-items-center btnBorderRadius"
                     (click)="isStarted ? null : sendMessage('start'); isStarted = true"
-                    [disabled]="isStarted"><mat-icon>play_arrow</mat-icon></button>
-                <button class="btn btn-danger col-2 marginButton d-flex justify-content-center align-items-center btnBorderRadius" (click)="isStarted ? sendMessage('stop') : null; stopTimer(0)"
-                    [disabled]="!isStarted"><mat-icon>stop</mat-icon></button>
-                <button mat-button class="btn btn-primary col-2 d-flex justify-content-center align-items-center btnBorderRadius"
+                    [disabled]="isStarted"><mat-icon class="colorWhite">play_arrow</mat-icon></button>
+                <button class="btn btnRed col-2 marginButton d-flex justify-content-center align-items-center btnBorderRadius" (click)="isStarted ? sendMessage('stop') : null; stopTimer(0)"
+                    [disabled]="!isStarted"><mat-icon class="colorWhite">stop</mat-icon></button>
+                <button mat-button class="btn btnBlue col-2 d-flex justify-content-center align-items-center btnBorderRadius"
                     (click)="onConnexion();loading = true">
-                    <mat-icon>bluetooth_searching</mat-icon>
+                    <mat-icon class="colorWhite">bluetooth_searching</mat-icon>
                     <mat-spinner class="marginSpinner" diameter="20" strokeWidth="3" color="warn"
                         *ngIf="loading && !isConnected"></mat-spinner>
                     <mat-icon class="marginSpinner" *ngIf="isConnected">check_circle_outline</mat-icon>
@@ -45,7 +45,7 @@
         <div class="col-6 scrollBar">
             <div class="container-fluid mt-3" *ngIf="!gameMode">
                 <div class="row justify-content-center">
-                    <div class="col-lg-2 col-4"><h2>Prénom</h2></div>
+                    <div class="col-lg-2 col-4"><h2>Prénoms</h2></div>
                     <div class="col-lg-2 col-4"><h2>Milieu</h2></div>
                     <div class="col-lg-2 col-4"><h2>Fin</h2></div>
                     <div class="col-lg-2 col-4"><h2>Actions</h2></div>
@@ -63,7 +63,7 @@
         </div>
         <div class="container-fluid mt-3" *ngIf="gameMode">
             <div class="row justify-content-center">
-                <div class="col-lg-2 col-4"><h2>Prénom</h2></div>
+                <div class="col-lg-2 col-4"><h2>Prénoms</h2></div>
                 <div class="col-lg-2 col-4"><h2>Milieu</h2></div>
                 <div class="col-lg-2 col-4"><h2>Fin</h2></div>
                 <div class="col-lg-2 col-4"><h2>Total</h2></div>

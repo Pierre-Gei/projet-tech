@@ -10,7 +10,7 @@
     height: 100%;
 }
 .red{
-    color: red;
+    color: #FF5353;
 }
 .hoverPointer{
     cursor: pointer;
@@ -24,8 +24,8 @@
     font-size: 1.5em;
 }
 .hoverBlue:hover {
-    color: #007bff;
+    color: #4694FF;
 }
 .colorBlue {
-    color: #007bff;
+    color: #4694FF;
 }
