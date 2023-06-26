@@ -14,6 +14,10 @@
     <div class="row heightRow">
         <div class="col-6 scrollBar">
             <div class="container-fluid">
+                <div class="row justify-content-center">
+                    <div class="col-lg-2 col-4"><h2>Prénoms</h2></div>
+                    <div class="col-lg-2 col-4"><h2>Actions</h2></div>
+                </div>
                 <div class="row justify-content-center" *ngFor="let course of listeCourse">
                     <div class="col-2 hoverPointer sizeTextTime hoverBlue" (click)="selectCourse(course)" [ngClass]="{'colorBlue':course._id == listeEleve._id}">
                         {{course.name}}
@@ -27,6 +31,12 @@
 
         <div class="col-6 scrollBar">
             <div class="container-fluid ">
+                <div class="row justify-content-center">
+                    <div class="col-lg-2 col-4"><h2>Prénoms</h2></div>
+                    <div class="col-lg-2 col-4"><h2>Milieu</h2></div>
+                    <div class="col-lg-2 col-4"><h2>Fin</h2></div>
+                    <div class="col-lg-2 col-4"><h2>Actions</h2></div>
+                </div>
                 <div class="row justify-content-center" *ngFor="let eleve of listeEleve.time" >
                     <div class="col-2 sizeTextTime">{{eleve.name}}</div>
                     <div class="col-2 sizeTextTime">{{eleve.midTime}}</div>
